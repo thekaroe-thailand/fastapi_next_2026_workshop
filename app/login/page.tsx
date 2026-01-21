@@ -7,6 +7,14 @@ import toast from 'react-hot-toast';
 import { ShoppingCart } from "lucide-react";
 
 export default function LoginPage() {
+    const router = useRouter();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        router.push('/pos');
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-linear-to-br
         from-blue-50 to-blue-100 p-4">
@@ -22,7 +30,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Login Form */}
-                    <form className="space-y-5">
+                    <form className="space-y-5" onSubmit={handleLogin}>
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                                 ชื่อผู้ใช้
