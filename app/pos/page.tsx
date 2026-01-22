@@ -2,12 +2,16 @@
 
 import Navbar from "@/components/Navbar";
 import { ProductInterface } from "@/types/ProductInterface";
-import { Plus, Search, ShoppingCart } from "lucide-react";
+import { Banknote, CreditCard, Plus, Search, ShoppingCart, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function POSPage() {
     const [products, setProudcts] = useState<ProductInterface[]>([]);
     const [filterProducts, setFilterProducts] = useState<ProductInterface[]>([]);
+    const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+    const [showReceiptModal, setShowReceiptModal] = useState<boolean>(false);
+    const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit_card'>('cash');
+    const [amountReceived, setAmountReceived] = useState('');
 
     useEffect(() => {
         fetchProduct();
@@ -27,6 +31,9 @@ export default function POSPage() {
             { id: 10, name: 'หมู่ย่าง', price: 70, image_url: '' }
         ])
     }
+
+    const total = 900;
+    const change = amountReceived ? parseFloat(amountReceived) - total : 0;
 
     return (
         <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-purple-50">
@@ -92,7 +99,7 @@ export default function POSPage() {
                     </div>
 
                     {/* Product Grid */}
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                         {filterProducts.map((product) => (
                             <button key={product.id}
                                 className="group backdrop-blur-md border rounded-2xl p-4
@@ -125,7 +132,157 @@ export default function POSPage() {
                         ))}
                     </div>
                 </div>
+
+                {/* card seciton */}
+                <div className="w-96 backdrop-blur-md border flex flex-col shadow-lg
+                    bg-white/80 border-l border-gray-200
+                ">
+                    <div className="p-6 border-b border-gray-200">
+                        <h2 className="text-xl font-bold flex items-center gap-3
+                            text-gray-800
+                        ">
+                            <div className="w-10 h-10 bg-linear-to-r
+                                from-indigo-500 to-purple-500 text-white text-sm
+                                px-3 py-1 rounded-full font-medium
+                            ">
+                                <ShoppingCart className="w-5 h-5 text-white" />
+                            </div>
+                            รายการสั่งซื้อ
+                            <span className="bg-linear-to-r from-green-800
+                                to-green-500 text-md text-white px-3 py-1
+                                rounded-full font-medium
+                            ">
+                                8
+                            </span>
+                        </h2>
+                    </div>
+
+                    {/* Table Number */}
+                    <div className="p-6 border-b border-gray-300">
+                        <label>หมายเลขโต้ะ</label>
+                        <input className="w-full px-4 py-3 backdrop-blur-md border
+                            rounded-xl shadow-lg bg-white/80 border-gray-300
+                            text-gray-800 focus:outline-none
+                        " />
+                    </div>
+
+                    {/* Note */}
+                    <div className="p-6 border-b border-gray-300">
+                        <label>หมายเหตุ</label>
+                        <input className="w-full px-4 py-3 backdrop-blur-md border
+                            rounded-xl shadow-lg bg-white/80 border-gray-300
+                            text-gray-800 focus:outline-none
+                        " />
+                    </div>
+
+                    {/* Card Items */}
+
+
+                    {/* Card Summary */}
+                    <div className="p-6 border-t border-gray-200">
+                        <div className="space-y-3 mb-4">
+                            <div className="flex justify-between text-gray-600">
+                                <span>ยอดรวม</span>
+                                <span className="font-bold text-gray-800">
+                                    900
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="flex-1 px-4 py-2 bg-gray-200
+                            border border-gray-300 rounded-xl">
+                                ล้างตะกร้า
+                            </button>
+                            <button className="flex-1 px-4 py-3 bg-linear-to-r
+                                from-indigo-500 to-purple-500 text-white
+                                rounded-xl
+                            "
+                                onClick={() => setShowPaymentModal(true)}
+                            >
+                                ชำระเงิน
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            {/* Payment Modal */}
+            {showPaymentModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center
+                    justify-center z-50 p-4
+                ">
+                    <div className="bg-white rounded-2xl w-full max-w-md p-6">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold">ชำระเงิน</h3>
+                            <button
+                                className="text-gray-400 hover:text-gray-500"
+                                onClick={() => setShowPaymentModal(false)}
+                            >
+                                <X className="w-6 h-6"></X>
+                            </button>
+                        </div>
+
+                        <div className="mb-6">
+                            <p className="text-gray-600 mb-2">ยอดที่ต้องชำระ</p>
+                            <p className="text-3xl font-bold text-blue-600">900</p>
+                        </div>
+
+                        <div className="mb-6">
+                            <p className="text-sm font-medium text-gray-700 mb-3">
+                                วิธีการชำระเงิน
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    className="p-4 rounded-xl border-2 flex flex-col
+                                        items-center gap-2 border-gray-300
+                                        hover:border-gray-400
+                                    "
+                                    onClick={() => setPaymentMethod('cash')}
+                                >
+                                    <Banknote className="w-8 h-8 text-blue-600" />
+                                    เงินสด
+                                </button>
+                                <button
+                                    className="p-4 rounded-xl border-2 flex flex-col
+                                        items-center gap-2 border-gray-300
+                                        hover:border-gray-400
+                                    "
+                                    onClick={() => setPaymentMethod('credit_card')}>
+                                    <CreditCard className="w-8 h-8 text-blue-400" />
+                                    บัตรเครดิตร
+                                </button>
+                            </div>
+                        </div>
+
+                        {paymentMethod == 'cash' && (
+                            <div className="pb-6">
+                                <label className="block text-sm text-gray-700 mb-2">
+                                    จำนวนเงินที่รับ
+                                </label>
+                                <input
+                                    type="number"
+                                    className="input-field text-lg"
+                                    placeholder="0.00"
+                                    value={amountReceived}
+                                    onChange={(e) => setAmountReceived(e.target.value)}
+                                />
+
+                                {change > 0 ? (
+                                    <p className="mt-2 text-green-600 text-2xl">เงินทอน: 999</p>
+                                ) : (
+                                    <p className="mt-2 text-red-600 text-2xl">เงินไม่พอ: -800</p>
+                                )}
+
+                                <button
+                                    className="btn-primary w-full py-3 mt-5"
+                                >
+                                    ยืนยันการชำระเงิน
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
